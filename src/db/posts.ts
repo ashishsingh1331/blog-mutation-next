@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client"
-import prisma from "./db"
-import { unstable_cache } from "next/cache"
-import { cache } from "react"
+import { Prisma } from "@prisma/client";
+import prisma from "./db";
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
 
 export const getPosts = unstable_cache(
   cache(
@@ -9,75 +9,77 @@ export const getPosts = unstable_cache(
       query,
       userId,
     }: {
-      query?: string
-      userId?: string | number
+      query?: string;
+      userId?: string | number;
     } = {}) => {
-      await wait(2000)
+      await wait(2000);
 
-      const where: Prisma.PostFindManyArgs["where"] = {}
+      const where: Prisma.PostFindManyArgs["where"] = {};
       if (query) {
         where.OR = [
           { title: { contains: query } },
           { body: { contains: query } },
-        ]
+        ];
       }
 
       if (userId) {
-        where.userId = Number(userId)
+        where.userId = Number(userId);
       }
 
-      return prisma.post.findMany({ where })
+      return prisma.post.findMany({ where });
     }
   ),
   ["posts"]
-)
+);
 
 export const getPost = unstable_cache(
   cache(async (postId: string | number) => {
-    await wait(2000)
-    return prisma.post.findUnique({ where: { id: Number(postId) } })
+    await wait(2000);
+    return prisma.post.findUnique({ where: { id: Number(postId) } });
   }),
   ["posts", "postId"]
-)
+);
 
 export const getUserPosts = unstable_cache(
   cache(async (userId: string | number) => {
-    await wait(2000)
-    return prisma.post.findMany({ where: { userId: Number(userId) } })
+    await wait(2000);
+    return prisma.post.findMany({ where: { userId: Number(userId) } });
   }),
   ["posts", "userId"]
-)
+);
 
-export function createPost({
+export async function createPost({
   title,
   body,
   userId,
 }: {
-  title: string
-  body: string
-  userId: number
+  title: string;
+  body: string;
+  userId: number;
 }) {
+  await wait(2000);
   return prisma.post.create({
     data: {
       title,
       body,
       userId,
     },
-  })
+  });
 }
 
-export function updatePost(
+export async function updatePost(
   postId: string | number,
   {
     title,
     body,
     userId,
   }: {
-    title: string
-    body: string
-    userId: number
+    title: string;
+    body: string;
+    userId: number;
   }
 ) {
+  await wait(2000);
   return prisma.post.update({
     where: { id: Number(postId) },
     data: {
@@ -85,15 +87,16 @@ export function updatePost(
       body,
       userId,
     },
-  })
+  });
 }
 
-export function deletePost(postId: string | number) {
-  return prisma.post.delete({ where: { id: Number(postId) } })
+export async function deletePost(postId: string | number) {
+  await wait(2000);
+  return prisma.post.delete({ where: { id: Number(postId) } });
 }
 
 function wait(duration: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, duration)
-  })
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
 }

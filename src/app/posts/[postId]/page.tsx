@@ -5,6 +5,7 @@ import { Skeleton, SkeletonList } from "@/components/Skeleton";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import DeleteButton from "./DeleteButton";
 
 export default function PostPage({
   params: { postId },
@@ -26,6 +27,7 @@ export default function PostPage({
                 >
                   Edit
                 </Link>
+                <DeleteButton postId={postId} />
               </div>
             </h1>
             <span className="page-subtitle">
@@ -79,6 +81,7 @@ async function PostDetails({ postId }: { postId: string }) {
           <Link className="btn btn-outline" href={`/posts/${postId}/edit`}>
             Edit
           </Link>
+          <DeleteButton postId={postId} />
         </div>
       </h1>
       <span className="page-subtitle">
